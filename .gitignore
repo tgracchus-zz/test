@@ -1,3 +1,11 @@
+/.idea/.name
+/.idea/compiler.xml
+/.idea/copyright/profiles_settings.xml
+/.idea/libraries/lib.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
 *.class
 
 # Mobile Tools for Java (J2ME)
