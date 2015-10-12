@@ -14,7 +14,7 @@ public class HttpResponseSender {
 
     public void sendResponse(Response response) {
         try {
-            sendResponse(response.getStatus().ordinal(), response.getExchange(), response.getBody());
+            sendResponse(response.getStatus().getStatus(), response.getExchange(), response.getBody());
         } catch (IOException e) {
             logger.log(Level.ALL, "Can not send response");
         }
@@ -22,7 +22,7 @@ public class HttpResponseSender {
 
     public void sendResourceNotFoundResponse(HttpExchange exchange) {
         try {
-            sendResponse(HttpStatus.SERVICE_NOT_AVAILABLE.ordinal(), exchange, exchange.getRequestURI().toString());
+            sendResponse(HttpStatus.SERVICE_NOT_AVAILABLE.getStatus(), exchange, exchange.getRequestURI().toString());
         } catch (IOException e) {
             logger.log(Level.ALL, "Can not send response");
         }

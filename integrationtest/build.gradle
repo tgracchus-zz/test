@@ -1,0 +1,6 @@
+
+dependencies {
+    testCompile project  (":server")
+    testCompile 'org.glassfish.jersey.core:jersey-client:2.22.1'
+
+}

@@ -11,4 +11,7 @@ public enum HttpStatus {
     }
 
 
+    public int getStatus() {
+        return status;
+    }
 }

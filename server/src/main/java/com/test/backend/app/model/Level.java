@@ -74,7 +74,7 @@ public class Level {
     private void updateScores(UserScore userScore) {
         scores.add(userScore);
         scores.sort(this.userScoreComparator);
-        if (isFull()) {
+        if (isOverflowed()) {
             scores.remove(scores.size()-1);
         }
     }
@@ -85,6 +85,10 @@ public class Level {
 
     private boolean isFull() {
         return scores.size() >= numberOfScoresByLevel;
+    }
+
+    private boolean isOverflowed() {
+        return scores.size() > numberOfScoresByLevel;
     }
 
 

@@ -1,6 +1,5 @@
 package com.test.backend.server;
 
-import com.test.backend.server.http.HttpResponseSender;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
@@ -16,8 +15,11 @@ public final class BackEndServer {
 
     private final HttpServer server;
 
-    public BackEndServer(HttpServer server) {
+    private final ThreadPoolExecutor threadPoolExecutor;
+
+    public BackEndServer(HttpServer server, ThreadPoolExecutor threadPoolExecutor) {
         this.server = server;
+        this.threadPoolExecutor = threadPoolExecutor;
     }
 
     public void start() {
@@ -25,6 +27,7 @@ public final class BackEndServer {
     }
 
     public void stop(int stopTimeout) {
+        this.threadPoolExecutor.shutdown();
         this.server.stop(stopTimeout);
     }
 
@@ -63,7 +66,7 @@ public final class BackEndServer {
         }
 
 
-        public BackEndServerBuilder threadPoolExecutor(ThreadPoolExecutor threadPoolExecutor){
+        public BackEndServerBuilder threadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
             this.threadPoolExecutor = threadPoolExecutor;
             return this;
         }
@@ -98,7 +101,7 @@ public final class BackEndServer {
                         && !httpHandlers.isEmpty()
                         && connectionThreads > 0
                         && keepAliveTime > 1
-                        && threadPoolExecutor!=null) {
+                        && threadPoolExecutor != null) {
 
                     HttpServer server = HttpServer.create(
                             new InetSocketAddress(InetAddress
@@ -110,7 +113,7 @@ public final class BackEndServer {
                         server.createContext(mapping.getMapping(), mapping.getHttpHandler());
                     }
 
-                    backEndServer = new BackEndServer(server);
+                    backEndServer = new BackEndServer(server, threadPoolExecutor);
 
                 } else {
                     throw new IllegalArgumentException();

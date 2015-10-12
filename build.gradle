@@ -1,15 +1,22 @@
-group 'com.test'
-version '1.0-RELEASE'
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.5
-
-repositories {
-    mavenCentral()
+allprojects {
+    group 'com.test'
+    version '1.0-RELEASE'
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+subprojects {
+    group 'com.test'
+    version '1.0-RELEASE'
+
+    apply plugin: 'java'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+        testCompile 'org.mockito:mockito-core:1.10.19'
+    }
 }

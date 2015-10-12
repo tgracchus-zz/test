@@ -17,7 +17,7 @@ public class Endpoints {
     }
 
     public Optional<Endpoint> findEndpoint(URI requestUri,String method) {
-        return endpointDefinitions.parallelStream()
+        return endpointDefinitions.stream()
                 .filter(definition -> definition.match(requestUri,method)).findFirst(); //
     }
 }

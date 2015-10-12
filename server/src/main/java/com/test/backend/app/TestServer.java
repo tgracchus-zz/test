@@ -1,4 +1,4 @@
-package com.test.backend;
+package com.test.backend.app;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.test.backend.app.endpoints.HighScoreEndpoint;
@@ -24,13 +24,12 @@ import com.test.backend.server.http.ResponseBuilder;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
-
-    private static BackEndServer server;
+public class TestServer {
 
 
     //In milliseconds: So 10 minutes
@@ -38,14 +37,19 @@ public class Main {
 
     private static int SCORES_PER_LEVEL = 15;
 
-    public static void main(String[] args) throws IllegalArgumentException {
+    private final BackEndServer server;
+
+
+    public TestServer(long tokenExpirationTime, int scoresPerLevel) {
 
         //Services
-        ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(4, 8, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+        int cores = Runtime.getRuntime().availableProcessors();
 
-        LoginService loginService = new DefaultLoginService(DEFAULT_TOKEN_EXPIRATION, threadPoolExecutor);
-        ScoreService scoreService = new DefaultScoreService(SCORES_PER_LEVEL);
+        ThreadPoolExecutor threadPoolExecutor =//
+                new ThreadPoolExecutor(cores, cores * 2, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+
+        LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
+        ScoreService scoreService = new DefaultScoreService(scoresPerLevel);
 
 
         //Endpoints
@@ -78,12 +82,13 @@ public class Main {
                 .threadPoolExecutor(threadPoolExecutor)
                 .build(); //
 
+    }
 
-        server.start();
+    public void runServer() {
         Scanner user_input = null;
         try {
             user_input = new Scanner(System.in);
-
+            server.start();
             System.out.println("Press Enter to stop the server");
             user_input.nextLine();
 
@@ -91,10 +96,22 @@ public class Main {
             if (user_input != null) {
                 user_input.close();
             }
-            server.stop(1);
-            System.out.println("Main Stopped");
+            stopServer();
         }
     }
+
+    public void stopServer() {
+        server.stop(1);
+        System.out.println("TestServer Stopped");
+    }
+
+    public static void main(String[] args) throws IllegalArgumentException {
+        TestServer testServer = new TestServer(DEFAULT_TOKEN_EXPIRATION, SCORES_PER_LEVEL);
+        testServer.runServer();
+
+    }
+
+
 
 
 }
