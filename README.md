@@ -1,7 +1,9 @@
+Description of the problem:
+
 1 Purpose
 The solution should not take more than half a day to write, though it will be difficult to write a “complete” and
-top­notch solution in such a short time span. The goal is not to get a solution covering all special cases in a
-100% robust way; the functions should be error free when used correctly but our main goal is to understand
+top-notch solution in such a short time span. The goal is not to get a solution covering all special cases in a
+100% robust way; the functions should be error free when used correctly but the goal is to understand
 your approach to the problem.
 
 2 Description
