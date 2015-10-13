@@ -94,6 +94,8 @@ public final class BackEndServer {
                     HttpServer server = HttpServer
                             .create(new InetSocketAddress(InetAddress.getByName(address), port), connectionThreads);
 
+                    server.setExecutor(threadPoolExecutor);
+
                     for (HttpHandlerMapping mapping : httpHandlers) {
                         server.createContext(mapping.getMapping(), mapping.getHttpHandler());
                     }
