@@ -24,13 +24,11 @@ import com.test.backend.server.http.ResponseBuilder;
 
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class TestServer {
-
 
     //In milliseconds: So 10 minutes
     private static long DEFAULT_TOKEN_EXPIRATION = 1000 * 60 * 10;
@@ -39,18 +37,16 @@ public class TestServer {
 
     private final BackEndServer server;
 
-
     public TestServer(long tokenExpirationTime, int scoresPerLevel) {
 
         //Services
         int cores = Runtime.getRuntime().availableProcessors();
 
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(cores, cores * 2, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
 
         LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
         ScoreService scoreService = new DefaultScoreService(scoresPerLevel);
-
 
         //Endpoints
         ResponseBuilder responseBuilder = new DefaultResponseBuilder();
@@ -67,20 +63,16 @@ public class TestServer {
                 )//
         );
 
-
         //Server
         HttpHandler httpHandler = //
                 new DefaultHttpHandler(endpoints, new DefaultRequestBuilder(), //
                         responseBuilder, new HttpResponseSender());
 
-
         server = new BackEndServer.BackEndServerBuilder().
-                address("0.0.0.0").port(8080) //
+                address("0.0.0.0").port(8888) //
                 .connectionThreads(150)//
-                .httpHandler("/", httpHandler)
-                .keepAliveTime(60L) //
-                .threadPoolExecutor(threadPoolExecutor)
-                .build(); //
+                .httpHandler("/", httpHandler) //
+                .threadPoolExecutor(threadPoolExecutor).build(); //
 
     }
 
@@ -97,6 +89,7 @@ public class TestServer {
                 user_input.close();
             }
             stopServer();
+            System.exit(0);
         }
     }
 
@@ -110,8 +103,5 @@ public class TestServer {
         testServer.runServer();
 
     }
-
-
-
 
 }
