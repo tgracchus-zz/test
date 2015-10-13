@@ -28,7 +28,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class STestServer {
+/**
+ * Single Thread Version of the Server. Faster than multithread due not to share state with lock contention
+ */
+public class SingleThreadTestServer {
 
     //In milliseconds: So 10 minutes
     private static long DEFAULT_TOKEN_EXPIRATION = 1000 * 60 * 10;
@@ -37,14 +40,14 @@ public class STestServer {
 
     private final BackEndServer server;
 
-    public STestServer(long tokenExpirationTime, int scoresPerLevel) {
+    public SingleThreadTestServer(long tokenExpirationTime, int scoresPerLevel) {
 
         //Services
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(1, 1, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000));
+                new ThreadPoolExecutor(1, 1, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(5000));
 
         ThreadPoolExecutor loginThreadPool =//
-                new ThreadPoolExecutor(1, 1, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000));
+                new ThreadPoolExecutor(1, 1, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(5000));
 
         LoginService loginService = new SDefaultLoginService(tokenExpirationTime, loginThreadPool);
         ScoreService scoreService = new SDefaultScoreService(scoresPerLevel);
@@ -71,7 +74,7 @@ public class STestServer {
 
         server = new BackEndServer.BackEndServerBuilder().
                 address("0.0.0.0").port(8888) //
-                .connectionThreads(150)//
+                .connectionThreads(350)//
                 .httpHandler("/", httpHandler) //
                 .threadPoolExecutor(threadPoolExecutor).build(); //
 
@@ -99,7 +102,7 @@ public class STestServer {
     }
 
     public static void main(String[] args) throws IllegalArgumentException {
-        STestServer testServer = new STestServer(DEFAULT_TOKEN_EXPIRATION, SCORES_PER_LEVEL);
+        SingleThreadTestServer testServer = new SingleThreadTestServer(DEFAULT_TOKEN_EXPIRATION, SCORES_PER_LEVEL);
         testServer.runServer();
 
     }

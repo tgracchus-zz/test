@@ -3,6 +3,8 @@ package com.test.backend.server.endpoint;
 import com.test.backend.server.http.*;
 
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by ulises on 8/10/15.
@@ -21,6 +23,8 @@ public abstract class Endpoint<T> {
         this.requestParser = requestParser;
     }
 
+    private final Logger log = Logger.getLogger(Endpoint.class.getName());
+
     public abstract Response doCall(Request request, T parsedRequest) throws Exception;
 
     public Response call(Request request) {
@@ -30,9 +34,11 @@ public abstract class Endpoint<T> {
             return doCall(request, requestObject);
 
         } catch (RequestParserException e) {
+            log.log(Level.ALL,e.getLocalizedMessage(),e);
             return newResponse(HttpStatus.BAD_REQUEST, request, e.getMessage());
 
         } catch (Exception e) {
+            log.log(Level.ALL,e.getLocalizedMessage(),e);
             return newServerErrorResponse(request, e.getMessage());
         }
 

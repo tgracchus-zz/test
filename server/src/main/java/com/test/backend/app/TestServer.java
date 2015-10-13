@@ -28,6 +28,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * Multi Thread Version of the Server. Slower than singlethread due to share state with lock contention
+ */
 public class TestServer {
 
     //In milliseconds: So 10 minutes
@@ -43,7 +47,7 @@ public class TestServer {
         int cores = Runtime.getRuntime().availableProcessors();
 
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000));
+                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(5000));
 
         LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
         ScoreService scoreService = new DefaultScoreService(scoresPerLevel);
@@ -70,7 +74,7 @@ public class TestServer {
 
         server = new BackEndServer.BackEndServerBuilder().
                 address("0.0.0.0").port(8888) //
-                .connectionThreads(150)//
+                .connectionThreads(350)//
                 .httpHandler("/", httpHandler) //
                 .threadPoolExecutor(threadPoolExecutor).build(); //
 
