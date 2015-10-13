@@ -1,4 +1,4 @@
-import com.test.backend.app.TestServer;
+import com.test.backend.app.STestServer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,10 +16,10 @@ import java.util.List;
 /**
  * Created by ulises on 12/10/15.
  */
-public class ConcurrentIntegrationTest {
+public class ConcurrentSingleIntegrationTest {
 
-    private TestServer testServer;
-    private TestServerThread testServerThread;
+   // private STestServer testServer;
+   // private TestServerThread testServerThread;
     private Client client;
     private WebTarget target;
 
@@ -27,40 +27,35 @@ public class ConcurrentIntegrationTest {
 
     private int users;
 
-    @Before
-    public void setUp() throws Exception {
+    @Before public void setUp() throws Exception {
         numberOfScores = 15;
         users = 100;
-        testServer = new TestServer(1000 * 60 * 10, numberOfScores);
-        testServerThread = new TestServerThread(testServer);
-        testServerThread.start();
+       // testServer = new STestServer(1000 * 60 * 10, numberOfScores);
+       // testServerThread = new TestServerThread(testServer);
+       // testServerThread.start();
         client = ClientBuilder.newClient();
         target = client.target("http://localhost:8080");
     }
 
-    @After
-    public void tearDown() throws Exception {
-        testServer.stopServer();
-        testServerThread.interrupt();
+    @After public void tearDown() throws Exception {
+      //  testServer.stopServer();
+      //  testServerThread.interrupt();
     }
 
-
     private static class TestServerThread extends Thread {
-        private final TestServer testServer;
 
-        public TestServerThread(TestServer testServer) {
+        private final STestServer testServer;
+
+        public TestServerThread(STestServer testServer) {
             this.testServer = testServer;
         }
 
-        @Override
-        public void run() {
+        @Override public void run() {
             testServer.runServer();
         }
     }
 
-
-    @Test
-    public void testHeadyLoad() throws Exception {
+    @Test public void testHeadyLoad() throws Exception {
 
         List<ExigentUser> clients = new ArrayList<>(numberOfScores);
         for (int j = 0; j < users; j++) {
@@ -91,8 +86,9 @@ public class ConcurrentIntegrationTest {
         }
 
         long totalNanos = (System.nanoTime() - nanos);
-        System.out.println("Mean response time " + (totalNanos / 1000000000.0) / repetitions + " of seconds for " + repetitions
-                + " repetitions and " + users + " concurrent users");
+        System.out.println(
+                "Mean response time " + (totalNanos / 1000000000.0) / repetitions + " of seconds for " + repetitions
+                        + " repetitions and " + users + " concurrent users");
 
     }
 
@@ -110,8 +106,7 @@ public class ConcurrentIntegrationTest {
             this.numberOfScores = numberOfScores;
         }
 
-        @Override
-        public void run() {
+        @Override public void run() {
 
             Response response = target.path(userId + "/login").request().get();
             if (response.getStatus() != 200) {
@@ -123,8 +118,7 @@ public class ConcurrentIntegrationTest {
             response.close();
 
             for (int i = 0; i < numberOfScores + 1; i++) {
-                response = target.path(levelId + "/score")
-                        .queryParam("sessionkey", token).request()
+                response = target.path(levelId + "/score").queryParam("sessionkey", token).request()
                         .post(Entity.entity(i, MediaType.TEXT_PLAIN_TYPE));
                 if (response.getStatus() != 200) {
                     response.close();
@@ -144,6 +138,5 @@ public class ConcurrentIntegrationTest {
 
         }
     }
-
 
 }

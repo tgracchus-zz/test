@@ -1,8 +1,10 @@
 package com.test.backend.app.endpoints;
 
+
+import com.test.backend.app.services.LoginService;
+
 import com.test.backend.app.model.Token;
 import com.test.backend.app.model.User;
-import com.test.backend.app.services.LoginService;
 import com.test.backend.server.endpoint.Endpoint;
 import com.test.backend.server.endpoint.RequestParser;
 import com.test.backend.server.http.*;

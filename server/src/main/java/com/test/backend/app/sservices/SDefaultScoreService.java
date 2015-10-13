@@ -1,19 +1,20 @@
-package com.test.backend.app.services;
+package com.test.backend.app.sservices;
 
-import com.test.backend.app.model.HighScoresByLevel;
 import com.test.backend.app.model.UserScore;
+import com.test.backend.app.services.ScoreService;
+import com.test.backend.app.smodel.SHighScoresByLevel;
 
 import java.util.List;
 
 /**
  * Created by ulises on 10/10/15.
  */
-public class DefaultScoreService implements ScoreService {
+public class SDefaultScoreService implements ScoreService {
 
-    private final HighScoresByLevel highScoresByLevel;
+    private final SHighScoresByLevel highScoresByLevel;
 
-    public DefaultScoreService(int numberOfScoresByLevel) {
-        this.highScoresByLevel = new HighScoresByLevel(numberOfScoresByLevel);
+    public SDefaultScoreService(int numberOfScoresByLevel) {
+        this.highScoresByLevel = new SHighScoresByLevel(numberOfScoresByLevel);
     }
 
     @Override public UserScore updateUserHighScore(int level, int score, int userId) {

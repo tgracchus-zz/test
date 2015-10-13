@@ -22,6 +22,5 @@ public class LoginRequestParser implements RequestParser<User> {
             return new User(Integer.valueOf(userIdString));
         }
 
-
     }
 }

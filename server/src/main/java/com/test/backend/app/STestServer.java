@@ -4,15 +4,15 @@ import com.sun.net.httpserver.HttpHandler;
 import com.test.backend.app.endpoints.HighScoreEndpoint;
 import com.test.backend.app.endpoints.LoginEndpoint;
 import com.test.backend.app.endpoints.ScoreEndpoint;
+import com.test.backend.app.model.User;
 import com.test.backend.app.requestparser.HighScoreRequestParser;
 import com.test.backend.app.requestparser.LoginRequestParser;
 import com.test.backend.app.requestparser.ScoreRequest;
 import com.test.backend.app.requestparser.ScoreRequestParser;
-import com.test.backend.app.services.DefaultLoginService;
-import com.test.backend.app.services.DefaultScoreService;
 import com.test.backend.app.services.LoginService;
 import com.test.backend.app.services.ScoreService;
-import com.test.backend.app.model.User;
+import com.test.backend.app.sservices.SDefaultLoginService;
+import com.test.backend.app.sservices.SDefaultScoreService;
 import com.test.backend.server.BackEndServer;
 import com.test.backend.server.dispatcher.DefaultHttpHandler;
 import com.test.backend.server.endpoint.Endpoints;
@@ -28,7 +28,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class TestServer {
+public class STestServer {
 
     //In milliseconds: So 10 minutes
     private static long DEFAULT_TOKEN_EXPIRATION = 1000 * 60 * 10;
@@ -37,16 +37,17 @@ public class TestServer {
 
     private final BackEndServer server;
 
-    public TestServer(long tokenExpirationTime, int scoresPerLevel) {
+    public STestServer(long tokenExpirationTime, int scoresPerLevel) {
 
         //Services
-        int cores = Runtime.getRuntime().availableProcessors();
-
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(cores, cores * 2, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+                new ThreadPoolExecutor(1, 1, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
 
-        LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
-        ScoreService scoreService = new DefaultScoreService(scoresPerLevel);
+        ThreadPoolExecutor loginThreadPool =//
+                new ThreadPoolExecutor(1, 1, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+
+        LoginService loginService = new SDefaultLoginService(tokenExpirationTime, loginThreadPool);
+        ScoreService scoreService = new SDefaultScoreService(scoresPerLevel);
 
         //Endpoints
         ResponseBuilder responseBuilder = new DefaultResponseBuilder();
@@ -98,7 +99,7 @@ public class TestServer {
     }
 
     public static void main(String[] args) throws IllegalArgumentException {
-        TestServer testServer = new TestServer(DEFAULT_TOKEN_EXPIRATION, SCORES_PER_LEVEL);
+        STestServer testServer = new STestServer(DEFAULT_TOKEN_EXPIRATION, SCORES_PER_LEVEL);
         testServer.runServer();
 
     }
