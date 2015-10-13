@@ -70,9 +70,9 @@ public class STestServer {
                         responseBuilder, new HttpResponseSender());
 
         server = new BackEndServer.BackEndServerBuilder().
-                address("0.0.0.0").port(8080) //
+                address("0.0.0.0").port(8888) //
                 .connectionThreads(150)//
-                .httpHandler("/", httpHandler).keepAliveTime(60L) //
+                .httpHandler("/", httpHandler) //
                 .threadPoolExecutor(threadPoolExecutor).build(); //
 
     }

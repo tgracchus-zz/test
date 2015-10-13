@@ -31,8 +31,8 @@ public final class BackEndServer {
         this.server.stop(stopTimeout);
     }
 
-
     private static class HttpHandlerMapping {
+
         private final HttpHandler httpHandler;
         private final String mapping;
 
@@ -55,7 +55,6 @@ public final class BackEndServer {
         private String address;
         private int port;
         private int connectionThreads;
-        private long keepAliveTime;
         private ThreadPoolExecutor threadPoolExecutor;
 
         private List<HttpHandlerMapping> httpHandlers = new ArrayList<>();
@@ -65,14 +64,8 @@ public final class BackEndServer {
             return this;
         }
 
-
         public BackEndServerBuilder threadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
             this.threadPoolExecutor = threadPoolExecutor;
-            return this;
-        }
-
-        public BackEndServerBuilder keepAliveTime(long keepAliveTime) {
-            this.keepAliveTime = keepAliveTime;
             return this;
         }
 
@@ -91,28 +84,21 @@ public final class BackEndServer {
             return this;
         }
 
-
         public BackEndServer build() throws IllegalArgumentException {
             BackEndServer backEndServer;
 
             try {
-                if (address != null && !address.isEmpty()
-                        && port >= 8000
-                        && !httpHandlers.isEmpty()
-                        && connectionThreads > 0
-                        && keepAliveTime > 1
-                        && threadPoolExecutor != null) {
+                if (address != null && !address.isEmpty() && port >= 8000 && !httpHandlers.isEmpty()
+                        && connectionThreads > 0 && threadPoolExecutor != null) {
 
-                    HttpServer server = HttpServer.create(
-                            new InetSocketAddress(InetAddress
-                                    .getByName(address), port),
-                            connectionThreads);
-
+                    HttpServer server = HttpServer
+                            .create(new InetSocketAddress(InetAddress.getByName(address), port), connectionThreads);
 
                     for (HttpHandlerMapping mapping : httpHandlers) {
                         server.createContext(mapping.getMapping(), mapping.getHttpHandler());
                     }
 
+                    server.setExecutor(threadPoolExecutor);
                     backEndServer = new BackEndServer(server, threadPoolExecutor);
 
                 } else {

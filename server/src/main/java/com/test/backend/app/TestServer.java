@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.test.backend.app.endpoints.HighScoreEndpoint;
 import com.test.backend.app.endpoints.LoginEndpoint;
 import com.test.backend.app.endpoints.ScoreEndpoint;
+import com.test.backend.app.model.User;
 import com.test.backend.app.requestparser.HighScoreRequestParser;
 import com.test.backend.app.requestparser.LoginRequestParser;
 import com.test.backend.app.requestparser.ScoreRequest;
@@ -12,7 +13,6 @@ import com.test.backend.app.services.DefaultLoginService;
 import com.test.backend.app.services.DefaultScoreService;
 import com.test.backend.app.services.LoginService;
 import com.test.backend.app.services.ScoreService;
-import com.test.backend.app.model.User;
 import com.test.backend.server.BackEndServer;
 import com.test.backend.server.dispatcher.DefaultHttpHandler;
 import com.test.backend.server.endpoint.Endpoints;
@@ -43,7 +43,7 @@ public class TestServer {
         int cores = Runtime.getRuntime().availableProcessors();
 
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(cores, cores * 2, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
 
         LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
         ScoreService scoreService = new DefaultScoreService(scoresPerLevel);
@@ -69,9 +69,9 @@ public class TestServer {
                         responseBuilder, new HttpResponseSender());
 
         server = new BackEndServer.BackEndServerBuilder().
-                address("0.0.0.0").port(8080) //
+                address("0.0.0.0").port(8888) //
                 .connectionThreads(150)//
-                .httpHandler("/", httpHandler).keepAliveTime(60L) //
+                .httpHandler("/", httpHandler) //
                 .threadPoolExecutor(threadPoolExecutor).build(); //
 
     }
@@ -89,6 +89,7 @@ public class TestServer {
                 user_input.close();
             }
             stopServer();
+            System.exit(0);
         }
     }
 

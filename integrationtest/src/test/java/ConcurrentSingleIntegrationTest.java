@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class ConcurrentSingleIntegrationTest {
 
-   // private STestServer testServer;
-   // private TestServerThread testServerThread;
+    private STestServer testServer;
+    private TestServerThread testServerThread;
     private Client client;
     private WebTarget target;
 
@@ -30,16 +30,16 @@ public class ConcurrentSingleIntegrationTest {
     @Before public void setUp() throws Exception {
         numberOfScores = 15;
         users = 100;
-       // testServer = new STestServer(1000 * 60 * 10, numberOfScores);
-       // testServerThread = new TestServerThread(testServer);
-       // testServerThread.start();
+        testServer = new STestServer(1000 * 60 * 10, numberOfScores);
+        testServerThread = new TestServerThread(testServer);
+        testServerThread.start();
         client = ClientBuilder.newClient();
-        target = client.target("http://localhost:8080");
+        target = client.target("http://localhost:8888");
     }
 
     @After public void tearDown() throws Exception {
-      //  testServer.stopServer();
-      //  testServerThread.interrupt();
+        testServer.stopServer();
+        testServerThread.interrupt();
     }
 
     private static class TestServerThread extends Thread {
