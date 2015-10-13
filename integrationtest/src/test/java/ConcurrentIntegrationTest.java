@@ -1,4 +1,3 @@
-import com.test.backend.app.TestServer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,48 +17,29 @@ import java.util.List;
  */
 public class ConcurrentIntegrationTest {
 
-    private TestServer testServer;
-    private TestServerThread testServerThread;
     private Client client;
-    private WebTarget target;
 
     private int numberOfScores;
 
     private int users;
 
+    private static String HOST = "http://localhost:8888";
+
     @Before public void setUp() throws Exception {
         numberOfScores = 15;
         users = 100;
-        testServer = new TestServer(1000 * 60 * 10, numberOfScores);
-        testServerThread = new TestServerThread(testServer);
-        testServerThread.start();
         client = ClientBuilder.newClient();
-        target = client.target("http://localhost:8888");
     }
 
     @After public void tearDown() throws Exception {
-        testServer.stopServer();
-        testServerThread.interrupt();
-    }
-
-    private static class TestServerThread extends Thread {
-
-        private final TestServer testServer;
-
-        public TestServerThread(TestServer testServer) {
-            this.testServer = testServer;
-        }
-
-        @Override public void run() {
-            testServer.runServer();
-        }
+        client.close();
     }
 
     @Test public void testHeadyLoad() throws Exception {
 
         List<ExigentUser> clients = new ArrayList<>(numberOfScores);
         for (int j = 0; j < users; j++) {
-            clients.add(new ExigentUser(target, j + 1, 1, numberOfScores));
+            clients.add(new ExigentUser(client.target(HOST), j + 1, 1, numberOfScores));
         }
 
         //Mean of 100 iterations
@@ -67,6 +47,8 @@ public class ConcurrentIntegrationTest {
         int repetitions = 10;
         String highScores;
         String lastHighScores = null;
+        WebTarget target = client.target(HOST);
+
         for (int i = 0; i < repetitions; i++) {
 
             AssertConcurrent.assertConcurrent("Done concurrent testing", clients, 120);

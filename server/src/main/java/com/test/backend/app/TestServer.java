@@ -24,7 +24,7 @@ import com.test.backend.server.http.ResponseBuilder;
 
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +43,7 @@ public class TestServer {
         int cores = Runtime.getRuntime().availableProcessors();
 
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new SynchronousQueue<>());
+                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(10000));
 
         LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
         ScoreService scoreService = new DefaultScoreService(scoresPerLevel);
