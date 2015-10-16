@@ -47,7 +47,7 @@ public class TestServer {
         int cores = Runtime.getRuntime().availableProcessors();
 
         ThreadPoolExecutor threadPoolExecutor =//
-                new ThreadPoolExecutor(cores - 1, cores, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(5000));
+                new ThreadPoolExecutor(cores, cores, 5, TimeUnit.MINUTES, new ArrayBlockingQueue<>(5000));
 
         LoginService loginService = new DefaultLoginService(tokenExpirationTime, threadPoolExecutor);
         ScoreService scoreService = new DefaultScoreService(scoresPerLevel);

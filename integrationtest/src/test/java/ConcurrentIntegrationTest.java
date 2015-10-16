@@ -27,7 +27,7 @@ public class ConcurrentIntegrationTest {
     private static String HOST = "http://localhost:8888";
 
     @Before public void setUp() throws Exception {
-        numberOfScores = 15;
+        numberOfScores = 200;
         users = 1000;
         client = ClientBuilder.newClient();
     }
@@ -45,7 +45,7 @@ public class ConcurrentIntegrationTest {
 
         //Mean of 100 iterations
         long nanos = System.nanoTime();
-        int repetitions = 10;
+        int repetitions = 1;
         String highScores;
         String lastHighScores = null;
         //  WebTarget target = client.target(HOST);
