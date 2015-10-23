@@ -29,7 +29,7 @@ public class ConcurrentExpirableLoginServiceTest {
 
         user = new User(10);
 
-        loginService = new DefaultLoginService(10, Executors.newSingleThreadExecutor());
+        loginService = new DefaultLoginService(1, Executors.newSingleThreadExecutor());
 
         impatientUsers = new ArrayList<>();
 
@@ -67,16 +67,16 @@ public class ConcurrentExpirableLoginServiceTest {
     @Test
     public void testLoginLogout() throws Exception {
 
-        Token token = loginService.login(user);
+        for (int i = 0; i < 100; i++) {
+            Token token = loginService.login(user);
 
-        AssertConcurrent.assertConcurrent("Finish Impatient User", impatientUsers, 120);
+            AssertConcurrent.assertConcurrent("Finish Impatient User", impatientUsers, 120);
 
-        Token afterUsersToken = loginService.login(user);
-        Assert.assertNotEquals(token,afterUsersToken);
+            Thread.sleep(10);
+            Token afterUsersToken = loginService.login(user);
+            Assert.assertNotEquals(token, afterUsersToken);
 
-        User finalUser = loginService.findUserByTokenId(afterUsersToken.getToken());
-
-        Assert.assertEquals(user,finalUser);
+        }
 
     }
 

@@ -66,17 +66,18 @@ public class ConcurrentLoginServiceTest {
 
     @Test
     public void testLoginLogout() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            Token token = loginService.login(user);
 
-        Token token = loginService.login(user);
+            AssertConcurrent.assertConcurrent("Finish Impatient User", impatientUsers, 120);
 
-        AssertConcurrent.assertConcurrent("Finish Impatient User", impatientUsers, 120);
+            Token afterUsersToken = loginService.login(user);
+            Assert.assertEquals(token, afterUsersToken);
 
-        Token afterUsersToken = loginService.login(user);
-        Assert.assertEquals(token,afterUsersToken);
+            User finalUser = loginService.findUserByTokenId(afterUsersToken.getToken());
 
-        User finalUser = loginService.findUserByTokenId(afterUsersToken.getToken());
-
-        Assert.assertEquals(user,finalUser);
+            Assert.assertEquals(user, finalUser);
+        }
 
     }
 
