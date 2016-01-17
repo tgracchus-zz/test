@@ -59,6 +59,12 @@ public final class BackEndServer {
 
         private List<HttpHandlerMapping> httpHandlers = new ArrayList<>();
 
+
+        public BackEndServerBuilder filter(){
+
+            return this;
+        }
+
         public BackEndServerBuilder httpHandler(String mapping, HttpHandler httpHandler) {
             this.httpHandlers.add(new HttpHandlerMapping(mapping, httpHandler));
             return this;

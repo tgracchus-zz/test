@@ -6,6 +6,7 @@ import org.junit.Test;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -48,24 +49,24 @@ public class ConcurrentIntegrationTest {
         int repetitions = 1;
         String highScores;
         String lastHighScores = null;
-        //  WebTarget target = client.target(HOST);
+        WebTarget target = client.target(HOST);
 
         for (int i = 0; i < repetitions; i++) {
 
             AssertConcurrent.assertConcurrent("Done concurrent testing", clients, 120);
 
-            //  Response response = target.path(1 + "/highscorelist").request().get();
-            // if (response.getStatus() != 200) {
-            //      response.close();
-            //      Assert.fail();
-            //  }
+              Response response = target.path(1 + "/highscorelist").request().get();
+             if (response.getStatus() != 200) {
+                  response.close();
+                  Assert.fail();
+              }
 
-            //  highScores = response.readEntity(String.class);
-            //  if (i == 0) {
-            //      lastHighScores = highScores;
-            //  }
-            //  Assert.assertEquals(lastHighScores, highScores);
-            //  lastHighScores = highScores;
+              highScores = response.readEntity(String.class);
+              if (i == 0) {
+                  lastHighScores = highScores;
+              }
+              Assert.assertEquals(lastHighScores, highScores);
+              lastHighScores = highScores;
         }
 
         long totalNanos = (System.nanoTime() - nanos);
